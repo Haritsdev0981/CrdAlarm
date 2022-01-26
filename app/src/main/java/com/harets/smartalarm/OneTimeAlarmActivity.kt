@@ -2,6 +2,9 @@ package com.harets.smartalarm
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import com.harets.smartalarm.data.Alarm
+import com.harets.smartalarm.data.local.AlarmDB
 import com.harets.smartalarm.databinding.ActivityOneTimeAlarmBinding
 import com.harets.smartalarm.helper.TAG_TIME_PICKER
 import com.harets.smartalarm.helper.timeFormatter
@@ -12,6 +15,8 @@ class OneTimeAlarmActivity : AppCompatActivity(), DatePickerFragment.DateDialogL
 
     private var _binding: ActivityOneTimeAlarmBinding? = null
     private val binding get() = _binding as ActivityOneTimeAlarmBinding
+
+    private val db by lazy { AlarmDB(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +35,20 @@ class OneTimeAlarmActivity : AppCompatActivity(), DatePickerFragment.DateDialogL
             btnSetTimeOneTime.setOnClickListener {
                 val timePickerFrament = TimePickerFrament()
                 timePickerFrament.show(supportFragmentManager, TAG_TIME_PICKER)
+            }
+
+            btnAddSetOneTimeAlarm.setOnClickListener {
+                val date = tvOnceDate.text.toString()
+                val time = tvOnceTime.text.toString()
+                val message = tvNoteOneTime.text.toString()
+
+                db.alarmDao().addAlarm(Alarm(
+                    0,
+                    date,
+                    time,
+                    message
+                ))
+                Log.i("AddAlarm", "Success set alarm on $date $time with message ")
             }
         }
     }
