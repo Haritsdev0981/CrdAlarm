@@ -7,20 +7,33 @@ import androidx.room.RoomDatabase
 import com.harets.smartalarm.data.Alarm
 import java.util.concurrent.locks.Lock
 
-@Database(entities = [Alarm::class], version = 2)
+@Database(entities = [Alarm::class], version = 1)
 abstract class AlarmDB : RoomDatabase(){
     abstract fun alarmDao() : AlarmDao
 
     companion object{
         @Volatile
         var instance: AlarmDB? = null
-         val LOCK = Any()
 
-        operator fun invoke(context: Context) = instance ?: synchronized(AlarmDB::class.java){
-            instance ?: buildDatabase(context)
+        @JvmStatic
+        fun  getDatabase(context: Context): AlarmDB {
+            if (instance == null){
+                synchronized(AlarmDB::class.java){
+                    instance = Room.databaseBuilder(
+                        context, AlarmDB::class.java, "smart_alarm.db"
+                    ).fallbackToDestructiveMigration()
+                        .build()
+                }
+            }
+            return instance as AlarmDB
         }
-
-        private fun buildDatabase(context: Context) =
-            Room.databaseBuilder(context, AlarmDB::class.java, "smart_alarm.db").build()
     }
+
+//        operator fun invoke(context: Context) = instance ?: synchronized(AlarmDB::class.java){
+//            instance ?: buildDatabase(context)
+//        }
+//
+//        private fun buildDatabase(context: Context) =
+//            Room.databaseBuilder(context, AlarmDB::class.java, "smart_alarm.db").build()
+//    }
 }
