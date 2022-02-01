@@ -6,7 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.harets.smartalarm.data.Alarm
 import com.harets.smartalarm.databinding.ItemRowReminderAlarmBinding
 
-class AlarmAdapter(val listAlarm: ArrayList<Alarm>) : RecyclerView.Adapter<AlarmAdapter.MyViewHolder>() {
+class AlarmAdapter() : RecyclerView.Adapter<AlarmAdapter.MyViewHolder>() {
+
+     val listAlarm: ArrayList<Alarm> = arrayListOf()
 
     class MyViewHolder(val binding: ItemRowReminderAlarmBinding) : RecyclerView.ViewHolder(binding.root) //untuk inisalisasi layout yg mau dipakai
 
@@ -24,4 +26,10 @@ class AlarmAdapter(val listAlarm: ArrayList<Alarm>) : RecyclerView.Adapter<Alarm
     }
 
     override fun getItemCount() = listAlarm.size
+
+    fun setData(list : List<Alarm>){
+        listAlarm.clear()
+        listAlarm.addAll(list)
+        notifyDataSetChanged() 
+    }
 }
