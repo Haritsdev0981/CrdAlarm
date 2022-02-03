@@ -96,8 +96,7 @@ class MainActivity : AppCompatActivity() {
                 val deletedAlarm = alarmAdapter?.listAlarm?.get(viewHolder.adapterPosition)
                 CoroutineScope(Dispatchers.IO).launch {
                     deletedAlarm?.let { alarmDao?.deleteAlarm(it)}
-                }
-                alarmAdapter?.notifyItemRemoved(viewHolder.adapterPosition)
+                } //Todo 3 -> NotifyItemRemoved di Hapus 1 baris
             }
         }).attachToRecyclerView((recyclerView))
     }

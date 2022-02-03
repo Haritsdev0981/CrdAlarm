@@ -16,12 +16,16 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-class OneTimeAlarmActivity : AppCompatActivity(), DatePickerFragment.DateDialogListener, TimePickerFrament.TimeDialogListener {
+class OneTimeAlarmActivity : AppCompatActivity(), DatePickerFragment.DateDialogListener,
+    TimePickerFrament.TimeDialogListener {
 
     private var _binding: ActivityOneTimeAlarmBinding? = null
     private val binding get() = _binding as ActivityOneTimeAlarmBinding
 
     private var alarmDao: AlarmDao? = null
+
+    private var _alarmService: AlarmService? = null
+    private val alarmService get() = _alarmService as AlarmService
 
 //    private val db by lazy { AlarmDB(this) }
 
@@ -33,6 +37,8 @@ class OneTimeAlarmActivity : AppCompatActivity(), DatePickerFragment.DateDialogL
         val db = AlarmDB.getDatabase(applicationContext)
         alarmDao = db.alarmDao()
 
+        _alarmService = AlarmService()
+
         initView()
     }
 
@@ -40,7 +46,10 @@ class OneTimeAlarmActivity : AppCompatActivity(), DatePickerFragment.DateDialogL
         binding.apply {
             btnSetDateOneTime.setOnClickListener {
                 val datePickerFragment = DatePickerFragment()
-                datePickerFragment.show(supportFragmentManager, "DatePickerDialog") // saat ditekan atau Show(), maka si fragment jam bakal muncul
+                datePickerFragment.show(
+                    supportFragmentManager,
+                    "DatePickerDialog"
+                ) // saat ditekan atau Show(), maka si fragment jam bakal muncul
             }
             btnSetTimeOneTime.setOnClickListener {
                 val timePickerFrament = TimePickerFrament()
@@ -50,21 +59,28 @@ class OneTimeAlarmActivity : AppCompatActivity(), DatePickerFragment.DateDialogL
             btnAddSetOneTimeAlarm.setOnClickListener {
                 val date = tvOnceDate.text.toString()
                 val time = tvOnceTime.text.toString()
-                val message = tvNoteOneTime.text.toString()
+                val message = etNoteOneTime.text.toString()
 
-                if (date != "Date" && time != "Time"){
+                if (date != "Date" && time != "Time") {
+                    alarmService.setOneTimeAlarm(applicationContext, 1,date, time, message )
                     CoroutineScope(Dispatchers.IO).launch {
-                        alarmDao?.addAlarm(Alarm(
-                            0,
-                            date,
-                            time,
-                            message
-                        ))
+                        alarmDao?.addAlarm(
+                            Alarm(
+                                0,
+                                date,
+                                time,
+                                message
+                            )
+                        )
                         Log.i("AddAlarm", "Success set alarm on $date $time with message ")
                         finish()
                     }
-                }else{
-                    Toast.makeText(applicationContext, "Set your Date and your Time.", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(
+                        applicationContext,
+                        "Set your Date and your Time.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -74,7 +90,7 @@ class OneTimeAlarmActivity : AppCompatActivity(), DatePickerFragment.DateDialogL
         val calendar = Calendar.getInstance()
         // mengatur tanggal supaya sama dengan yang sudah dipilih di DatePickerDialog
         calendar.set(year, month, dayOfMoth)
-        val  dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
 
         binding.tvOnceDate.text = dateFormat.format(calendar.time)
     }
