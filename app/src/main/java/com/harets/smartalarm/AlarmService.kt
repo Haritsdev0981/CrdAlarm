@@ -41,7 +41,7 @@ class AlarmService : BroadcastReceiver() {
         val calender = Calendar.getInstance()
         //date
         calender.set(Calendar.YEAR, Integer.parseInt(dateArray[2]))
-        calender.set(Calendar.MONTH, Integer.parseInt(dateArray[1]))
+        calender.set(Calendar.MONTH, Integer.parseInt(dateArray[1])-1)
         calender.set(Calendar.DAY_OF_MONTH, Integer.parseInt(dateArray[0]))
         //time
         calender.set(Calendar.HOUR, Integer.parseInt(timeArray[0]))
