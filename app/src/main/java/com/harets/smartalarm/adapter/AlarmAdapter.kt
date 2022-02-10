@@ -34,6 +34,5 @@ class AlarmAdapter() : RecyclerView.Adapter<AlarmAdapter.MyViewHolder>() {
         val alarmDiffUtilResult = DiffUtil.calculateDiff(alarmDiffUtil)
         this.listAlarm = list as ArrayList<Alarm>
         alarmDiffUtilResult.dispatchUpdatesTo(this)
-        notifyDataSetChanged()
     }
 }

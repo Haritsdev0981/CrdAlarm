@@ -69,7 +69,8 @@ class OneTimeAlarmActivity : AppCompatActivity(), DatePickerFragment.DateDialogL
                                 0,
                                 date,
                                 time,
-                                message
+                                message,
+                                AlarmService.TYPE_ONE_TIME
                             )
                         )
                         Log.i("AddAlarm", "Success set alarm on $date $time with message ")
@@ -82,6 +83,10 @@ class OneTimeAlarmActivity : AppCompatActivity(), DatePickerFragment.DateDialogL
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+            }
+
+            btnCancelSetOneTimeAlarm.setOnClickListener {
+                finish()
             }
         }
     }

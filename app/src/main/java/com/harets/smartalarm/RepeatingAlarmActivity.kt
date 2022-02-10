@@ -2,11 +2,17 @@ package com.harets.smartalarm
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import com.harets.smartalarm.data.Alarm
 import com.harets.smartalarm.data.local.AlarmDB
 import com.harets.smartalarm.data.local.AlarmDao
 import com.harets.smartalarm.databinding.ActivityRepeatingAlarmBinding
 import com.harets.smartalarm.helper.TAG_TIME_PICKER
 import com.harets.smartalarm.helper.timeFormatter
+import kotlinx.android.synthetic.main.activity_one_time_alarm.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class RepeatingAlarmActivity : AppCompatActivity(), TimePickerFrament.TimeDialogListener{
 
@@ -37,6 +43,34 @@ class RepeatingAlarmActivity : AppCompatActivity(), TimePickerFrament.TimeDialog
                 val timePickerFrament = TimePickerFrament()
                 timePickerFrament.show(supportFragmentManager, TAG_TIME_PICKER)
             }
+
+            btnAddSetRepeatingAlarm.setOnClickListener {
+                val time = tv_once_time.text.toString()
+                val message = etNoteRepeating.text.toString()
+                if (time != "Time"){
+                    alarmService.setRepeatingAlarm(applicationContext, AlarmService.TYPE_REPEATING, time, message)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        alarmDao?.addAlarm(Alarm(
+                            0,
+                            "Repeating Alarm",
+                            time,
+                            message,
+                            AlarmService.TYPE_REPEATING
+                        ))
+                        finish()
+                    }
+                }else{
+                    Toast.makeText(
+                        this@RepeatingAlarmActivity,
+                        "Please set time of alarm",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            btnCancelSetRepeatingAlarm.setOnClickListener {
+                finish()
+            }
         }
     }
 
@@ -44,8 +78,8 @@ class RepeatingAlarmActivity : AppCompatActivity(), TimePickerFrament.TimeDialog
         binding.tvRepeatingTime.text = timeFormatter(hourOfDay, minute)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
-    }
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        _binding = null
+//    }
 }

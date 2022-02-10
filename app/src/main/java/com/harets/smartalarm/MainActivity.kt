@@ -3,23 +3,17 @@ package com.harets.smartalarm
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Dao
 import com.harets.smartalarm.adapter.AlarmAdapter
-import com.harets.smartalarm.data.Alarm
 import com.harets.smartalarm.data.local.AlarmDB
 import com.harets.smartalarm.data.local.AlarmDao
 import com.harets.smartalarm.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,6 +22,8 @@ class MainActivity : AppCompatActivity() {
 
     private var alarmDao : AlarmDao? = null
     private var alarmAdapter : AlarmAdapter? = null
+
+    private var alarmService : AlarmService? = null
 
     override fun onResume() {
         super.onResume()
@@ -52,6 +48,8 @@ class MainActivity : AppCompatActivity() {
         alarmDao = db.alarmDao()
 
         alarmAdapter = AlarmAdapter()
+
+        alarmService = AlarmService()
 
         initView()
         setupRecylerView()
@@ -97,6 +95,8 @@ class MainActivity : AppCompatActivity() {
                 CoroutineScope(Dispatchers.IO).launch {
                     deletedAlarm?.let { alarmDao?.deleteAlarm(it)}
                 } //Todo 3 -> NotifyItemRemoved di Hapus 1 baris
+                val alarmType = deletedAlarm?.type
+                alarmType?.let { alarmService?.cancelAlarm(baseContext, it) }
             }
         }).attachToRecyclerView((recyclerView))
     }
